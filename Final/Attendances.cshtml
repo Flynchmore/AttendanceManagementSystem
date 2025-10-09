@@ -1,0 +1,113 @@
+@page
+@model AttendancesModel
+@{
+    ViewData["Title"] = "Mark Attendance";
+}
+
+<div class="text-center mb-4">
+    <h1 class="display-4">Mark Attendance</h1>
+    <p class="lead">Date: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+</div>
+
+@if (Model.Students.Any())
+{
+    <form method="post">
+        <div class="card" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 style="font-weight: normal;">Student List</h3>
+                <div>
+                    <button type="submit" class="btn" style="font-weight: bold; background-color: #28A745; border: 1px solid #28A745; color: white;">Save Attendance</button>
+                </div>
+            </div>
+            <div class="card-body" style="background-color: white;">
+                <div class="table-responsive">
+                    <table class="table" style="background-color: white;">
+                        <thead style="background-color: white;">
+                            <tr>
+                                <th style="font-weight: bold;">Student ID</th>
+                                <th style="font-weight: bold;">Full Name</th>
+                                <th style="font-weight: bold;">Section</th>
+                                <th style="font-weight: bold;">Present</th>
+                                <th style="font-weight: bold;">Absent</th>
+                                <th style="font-weight: bold;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody style="background-color: white;">
+                            @for (int i = 0; i < Model.Students.Count; i++)
+                            {
+                                <tr style="background-color: white;">
+                                    <td>
+                                        @Model.Students[i].StudentId
+                                        <input type="hidden" name="AttendanceRecords[@i].StudentId" value="@Model.Students[i].StudentId" />
+                                        <input type="hidden" name="AttendanceRecords[@i].FullName" value="@Model.Students[i].FullName" />
+                                        <input type="hidden" name="AttendanceRecords[@i].Section" value="@Model.Students[i].Section" />
+                                    </td>
+                                    <td>@Model.Students[i].FullName</td>
+                                    <td>@Model.Students[i].Section</td>
+                                    <td>
+                                        <input type="radio" name="AttendanceRecords[@i].Status" value="Present"
+                                               class="form-check-input" id="present_@i" />
+                                        <label class="form-check-label" for="present_@i" style="color: black;">Present</label>
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="AttendanceRecords[@i].Status" value="Absent"
+                                               class="form-check-input" id="absent_@i" />
+                                        <label class="form-check-label" for="absent_@i" style="color: black;">Absent</label>
+                                    </td>
+                                    <td>
+                                        <a href="/EditStudent?id=@Model.Students[i].Id" class="btn btn-sm btn-primary" style="font-weight: bold; background-color: #007bff; border: 1px solid #007bff; color: white; margin-right: 5px;">Edit</a>
+                                        <a href="/DeleteStudent?id=@Model.Students[i].Id" class="btn btn-sm btn-danger" style="font-weight: bold; background-color: #dc3545; border: 1px solid #dc3545; color: white;">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (TempData["AttendanceMessage"] != null)
+    {
+        <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: black;">
+            @TempData["AttendanceMessage"]
+        </div>
+    }
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: green;">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: red;">
+            @TempData["Error"]
+        </div>
+    }
+}
+else
+{
+    <div class="alert" role="alert" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);">
+        <h4>No Students Found</h4>
+        <a href="/" class="btn" style="font-weight: bold; background-color: #28A745; border: 1px solid #28A745; color: white;">Add Students</a>
+    </div>
+}
+
+<script>
+    document.querySelectorAll('.form-check-input[type="radio"]').forEach(function(radio) {
+        radio.addEventListener('mousedown', function(e) {
+            // Store checked state before click
+            this.wasChecked = this.checked;
+        });
+        radio.addEventListener('click', function(e) {
+            // If it was checked before, allow deselect
+            if (this.wasChecked) {
+                this.checked = false;
+                // For Razor Pages model binding, clear the value in the corresponding hidden input if needed
+            }
+        });
+    });
+</script>
