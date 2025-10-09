@@ -1,0 +1,67 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Register Student";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Add Students</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post">
+            <div class="card"
+                 style="border: 2px solid black;
+                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+                 border-radius: 15px;
+                 padding: 20px;
+                 transition: 0.3s; "
+
+                onmouseover=" this.style.boxShadow='0 6px 15px rgba(0,0,0,0.6)' ; this.style.transform='translateY(-2px)' "
+                onmouseout=" this.style.boxShadow='0 4px 10px rgba(0,0,0,0.4)'; this.style.transform='translateY(0)' ">
+                <div class="card-header;">
+                    <h3 class="text-center"; style="font-weight: normal;">Student Information</h3>
+                </div>
+                <div class="card-body" style="background-color: white; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 20px;">
+                    <div class="mb-3">
+                        <label for="FullName" class="form-label" style="font-weight: bold;">Full Name</label>
+                        <input asp-for="Student.FullName" style="border: 0.5px solid black;" class="form-control" required />
+                        <span asp-validation-for="Student.FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Section" class="form-label" style="font-weight: bold;">Section</label>
+                        <input asp-for="Student.Section" style="border: 0.5px solid black;" class="form-control" required />
+                        <span asp-validation-for="Student.Section" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="StudentId" class="form-label" style="font-weight: bold;">Student ID</label>
+                        <input asp-for="Student.StudentId" style="border: 0.5px solid black;" class="form-control" required />
+                        <span asp-validation-for="Student.StudentId" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn" style="font-weight: bold; background-color: #28A745; border: 1px solid #28A745; color: white;">Add Student</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: green;">
+                @TempData["Message"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: red;">
+                @TempData["Error"]
+            </div>
+        }
+    </div>
+</div>
+
