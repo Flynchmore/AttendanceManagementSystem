@@ -1,0 +1,142 @@
+@page
+@model RecordModel
+@{
+    ViewData["Title"] = "Attendance Records";
+}
+
+<div class="text-center mb-4">
+    <h1 class="display-4">Attendance Records</h1>
+</div>
+
+@if (Model.AttendanceRecords.Any())
+{
+    <div class="card" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 style="font-weight: normal;">History</h3>
+                <form method="post" asp-page-handler="DeleteAll"
+                      onsubmit="return false;">
+                <button type="button" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                            style="font-weight: bold; background-color: #FF0000; border: 1px solid #FF0000; color: white;">
+                        Empty Records
+                    </button>
+                </form>
+            </div>
+        <div class="card-body" style="background-color: white;">
+            <div class="table-responsive">
+                <table class="table" style="background-color: white;">
+                    <thead style="background-color: white;">
+                        <tr>
+                            <th style="font-weight: bold;">Date</th>
+                            <th style="font-weight: bold;">Student ID</th>
+                            <th style="font-weight: bold;">Full Name</th>
+                            <th style="font-weight: bold;">Section</th>
+                            <th style="font-weight: bold;">Status</th>
+                            <th style="font-weight: bold;">Marked At</th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: white;">
+                        @foreach (var record in Model.AttendanceRecords)
+                        {
+                            <tr style="background-color: white;">
+                                <td>@record.Date.ToString("MMMM dd, yyyy")</td>
+                                <td>@record.StudentId</td>
+                                <td>@record.FullName</td>
+                                <td>@record.Section</td>
+                                <td>
+                                    @if (record.Status == "Present")
+                                    {
+                                        <span style="color: green; font-weight: normal;">✓ Present</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: red; font-weight: normal;">✗ Absent</span>
+                                    }
+                                </td>
+                                <td>@record.MarkedAt.ToLocalTime().ToString("hh:mm tt")</td>
+                                <td>
+                                    <a href="/EditAttendance?id=@record.Id" class="btn btn-sm" style="font-weight: bold; background-color: #007bff; border: 1px solid #007bff; color: white;">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px;">
+                <div class="card-body text-center" style="background-color: white;">
+                    <h5 style="font-weight: normal;">Total Records</h5>
+                    <h2 style="font-weight: normal;">@Model.AttendanceRecords.Count</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px;">
+                <div class="card-body text-center" style="background-color: white;">
+                    <h5 style="font-weight: normal; color: green;">Present</h5>
+                    <h2 style="font-weight: normal; color: green;">@Model.PresentCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px;">
+                <div class="card-body text-center" style="background-color: white;">
+                    <h5 style="font-weight: normal; color: red;">Absent</h5>
+                    <h2 style="font-weight: normal; color: red;">@Model.AbsentCount</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header border-0 d-block text-center">
+                    <div style="font-size: 3rem; color: #ffc107;">⚠️</div>
+                    <h4 class="mt-2" style="font-weight: bold; color: #dc3545;">Warning</h4>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p style="font-size: 18px; font-weight: 500;">
+                        Are you sure you want to <strong>delete all attendance records?</strong>
+                    </p>
+                    <p class="text-danger mb-0">This action cannot be undone.</p>
+                </div>
+
+                <div class="modal-footer justify-content-center border-0">
+                    <form method="post" asp-page-handler="DeleteAll">
+                        <button type="submit" class="btn btn-danger px-4 fw-bold">Confirm</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: green;">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert mt-3" role="alert" style="background-color: white; border: 1px solid #dee2e6; color: red;">
+            @TempData["Error"]
+        </div>
+    }
+}
+else
+{
+    <div class="alert" role="alert" style="box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);">
+        <h4>No Attendance Records Found</h4>
+        <a href="/Attendances" class="btn" style="font-weight: bold; background-color: #28A745; border: 1px solid #28A745; color: white;">Mark Attendance</a>
+    </div>
+}
